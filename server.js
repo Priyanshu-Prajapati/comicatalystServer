@@ -23,4 +23,4 @@ wss.on("connection", (ws) => {
   });
 });
 
-console.log("WebSocket server is running on ws://localhost:8080");
+console.log("WebSocket server is running on wss://comicatalystserver-production.up.railway.app");

@@ -10,7 +10,7 @@ const port = 3000;
 // Enable CORS
 // app.use(cors());
 app.use(cors({
-    origin: 'http://127.0.0.1:5501', // Change this to match your frontend URL
+    origin: 'comicatalystserver-production.up.railway.app', // Change this to match your frontend URL
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type']
 }));
@@ -28,7 +28,7 @@ app.get('/get-huggingface-api-key', (req, res) => {
 
 // Start the server
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`Server is running on https://comicatalystserver-production.up.railway.app:${port}`);
 });
 
 
