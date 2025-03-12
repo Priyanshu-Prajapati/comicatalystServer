@@ -10,7 +10,7 @@ dotenv.config(); // Load environment variables from .env file
 const app = express();
 
 app.use(cors({
-    origin: 'http://127.0.0.1:5501', // Change this to match your frontend URL
+    origin: 'https://comicatalystserver-production.up.railway.app', // Change this to match your frontend URL
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type']
 }));

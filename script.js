@@ -3,7 +3,7 @@ const styleSelector = document.querySelector("#style-selector");
 
 async function fetchHuggingFaceApiKey() {
   try {
-      const response = await fetch('http://localhost:3000/get-huggingface-api-key');
+      const response = await fetch('https://comicatalystserver-production.up.railway.app/get-huggingface-api-key');
       
       if (!response.ok) {
           throw new Error('Failed to fetch API key');
@@ -35,7 +35,7 @@ const styleAppendText = {
   Realistic: "",
 };
 // Connect to the WebSocket server
-const socket = new WebSocket("ws://localhost:3000");
+const socket = new WebSocket("wss://comicatalystserver-production.up.railway.app");
 
 socket.onopen = () => {
   console.log("WebSocket connection established");
