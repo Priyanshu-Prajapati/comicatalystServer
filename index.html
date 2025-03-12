@@ -770,7 +770,7 @@
       }
 
       // Connect to the WebSocket server
-      const ws = new WebSocket("wss://comicatalystserver-production.up.railway.app/8080");
+      const ws = new WebSocket("ws://localhost:3000");
 
       // Handle WebSocket connection open
       ws.onopen = () => {
