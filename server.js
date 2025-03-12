@@ -1,6 +1,6 @@
-const WebSocket = require("ws");
+const WebSocket = require("wss");
 
-const wss = new WebSocket.Server({ port: 8080 });
+const wss = new WebSocket.Server({ port: process.env.PORT });
 
 wss.on("connection", (ws) => {
   console.log("New client connected");
@@ -23,4 +23,6 @@ wss.on("connection", (ws) => {
   });
 });
 
-console.log("WebSocket server is running on wss://comicatalystserver-production.up.railway.app");
+console.log(
+  "WebSocket server is running on wss://comicatalystserver-production.up.railway.app"
+);
