@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Comicatalyst</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3406565130140812"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        display: flex;
+        flex-direction: column; /* Stack elements vertically */
+        align-items: center;
+        justify-content: flex-start; /* Align content at the top */
+
+        background: #f8f8f8;
+        padding: 0 20px 20px 20px 20px;
+      }
+      .image-generator {
+        text-align: center;
+        width: 100%;
+      }
+
+      .container {
+        display: flex;
+        gap: 20px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+        width: 450px;
+        height: 700px;
+        border: 1px solid #ccc;
+        background: white;
+        padding: 10px;
+        gap: 5px;
+        margin-bottom: 30px;
+      }
+
+      .box {
+        border: 1px solid black;
+        background-color: #f9f9f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+      }
+
+      /* Specific box heights */
+      .box:nth-child(1) {
+        grid-column: 1;
+        grid-row: 1;
+        height: 160px;
+      }
+      .box:nth-child(2) {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        height: 368px;
+      }
+      .box:nth-child(3) {
+        grid-column: 1;
+        grid-row: 2;
+        height: 200px;
+      }
+      .box:nth-child(4) {
+        grid-column: 1;
+        grid-row: 3;
+        grid-column: span 2;
+        height: 300px;
+        background: #eef4ff;
+      }
+
+      /* Image inside grid */
+      .img-card {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+      }
+      .img-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+      }
+      .download-btn {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 5px;
+        border-radius: 50%;
+      }
+      .download-btn img {
+        width: 20px;
+        height: 20px;
+      }
+      .controls b .content h1 {
+        margin-top: 40px;
+      }
+      .container1 {
+        display: none;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+        gap: 5px;
+        width: 90%;
+        max-width: 400px;
+        background: white;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-top: 50px;
+      }
+      .container2 {
+        display: none;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+        gap: 5px;
+        width: 90%;
+        max-width: 400px;
+        background: white;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-top: 50px;
+      }
+      .container3 {
+        display: none;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+        gap: 5px;
+        width: 90%;
+        max-width: 400px;
+        background: white;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-top: 50px;
+      }
+      .prompt-container {
+        max-width: 400px;
+        background: white;
+        margin: 20px 20px 0 20px;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        height: 100px; /* Fixed height */
+        overflow-y: auto; /* Enable vertical scrolling */
+      }
+      .prompt-container p {
+        color: #757575;
+      }
+      label {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      select {
+        padding: 10px;
+        font-size: 16px;
+        border: 2px solid #007bff;
+        border-radius: 5px;
+        background-color: white;
+        cursor: pointer;
+      }
+
+      .boxx {
+        background-color: #f5f5f5;
+      }
+
+      .boxx1 {
+        grid-column: span 1;
+        height: 200px;
+        background-color: #fcfcfc;
+      }
+      .boxxx1 {
+        grid-column: 1;
+        grid-row: 1;
+        height: 160px;
+      }
+      .boxxxx1 {
+        grid-row: span 1;
+      }
+      .boxx2 {
+        grid-column: span 1;
+        height: 200px;
+        background-color: #f2f2f5;
+      }
+      .boxxx2 {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        height: 368px;
+      }
+      .boxxxx2 {
+        grid-row: span 2;
+        height: 250px;
+      }
+      .boxxxx4 {
+        grid-column: span 1;
+      }
+
+      .boxx3 {
+        grid-column: span 2;
+        height: 270px;
+        background-color: #f6f8fc;
+      }
+      .boxxx3 {
+        grid-column: 1;
+        grid-row: 2;
+        height: 200px;
+      }
+      .boxxxx3 {
+        grid-row: span 2;
+      }
+      .boxx4 {
+        grid-column: span 2;
+        height: 220px;
+        background-color: #eef5fc;
+      }
+      .boxxx4 {
+        grid-column: 1;
+        grid-row: 3;
+        grid-column: span 2;
+        height: 300px;
+        background: #eef4ff;
+      }
+
+      /* Dropdown Button */
+      .dropbtn {
+        background-color: #5d3bf5;
+        color: white;
+        padding: 16px;
+        margin-top: 10px;
+        font-size: 16px;
+        border: none;
+        border-radius: 2rem;
+      }
+
+      .dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f1f1f1;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+      }
+
+      .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+      }
+
+      .dropdown-content a:hover {
+        background-color: #ddd;
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+
+      .dropdown:hover .dropbtn {
+        background-color: #3e8e41;
+      }
+      .button-container {
+        display: flex; /* Align children in a row */
+        gap: 10px; /* Adds space between buttons */
+        justify-content: center; /* Centers the buttons horizontally */
+        margin-top: 1rem;
+        margin-bottom: 3rem;
+      }
+
+      .download-buttons {
+        width: 200px; /* Fixed width for buttons */
+        display: flex;
+        align-items: center; /* Center icon and text vertically */
+        justify-content: center; /* Center icon and text horizontally */
+        gap: 8px; /* Add spacing between icon and text */
+        padding: 10px 20px; /* Adjust padding for better appearance */
+        font-size: 16px; /* Adjust font size */
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .download-buttons:hover {
+        background-color: #0056b3;
+      }
+      select {
+        padding: 10px;
+        font-size: 16px;
+        border: 2px solid #3498db; /* Blue border */
+        border-radius: 5px;
+        background-color: white;
+        color: #333;
+        cursor: pointer;
+        outline: none;
+        transition: all 0.3s ease;
+      }
+
+      /* Hover Effect */
+      select:hover {
+        border-color: #2980b9; /* Darker blue */
+      }
+
+      /* Focus Effect */
+      select:focus {
+        border-color: #1abc9c; /* Green border */
+        box-shadow: 0 0 5px rgba(26, 188, 156, 0.5);
+      }
+
+      /* Disable default arrow and add custom styling */
+      select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"><path d="M7 10l5 5 5-5z"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 15px;
+        padding-right: 30px; /* Space for the arrow */
+      }
+
+      /* Style the dropdown options */
+      select option {
+        background: white;
+        color: black;
+        font-size: 16px;
+      }
+
+      /* Mobile View Styles */
+      @media (max-width: 768px) {
+        .layout-selector {
+          display: flex;
+          flex-direction: column; /* Stack elements vertically */
+          align-items: center; /* Center align items */
+          gap: 10px; /* Add spacing between elements */
+          margin-top: 20px; /* Add margin for better spacing */
+        }
+
+        .layout-selector label {
+          font-size: 16px; /* Adjust font size for mobile */
+          margin-bottom: 5px; /* Add spacing below the label */
+        }
+
+        .layout-selector select {
+          width: 100%; /* Full width for dropdown */
+          max-width: 300px; /* Limit maximum width */
+          font-size: 14px; /* Adjust font size for mobile */
+        }
+
+        .dropdown {
+          width: 100%; /* Full width for dropdown */
+          max-width: 300px; /* Limit maximum width */
+        }
+
+        .dropbtn {
+          width: 100%; /* Full width for button */
+          font-size: 14px; /* Adjust font size for mobile */
+          padding: 12px; /* Adjust padding for better touch experience */
+        }
+
+        .dropdown-content {
+          width: 100%; /* Full width for dropdown content */
+          max-width: 300px; /* Limit maximum width */
+        }
+
+        .dropdown-content a {
+          font-size: 14px; /* Adjust font size for mobile */
+        }
+        .button-container {
+          flex-direction: row;
+          align-items: center; /* Center buttons horizontally */
+        }
+
+        .download-buttons {
+          width: 100%; /* Full width for buttons */
+          max-width: 300px; /* Limit maximum width */
+          font-size: 14px; /* Adjust font size for mobile */
+          padding-left: 20px;
+          padding-right: 20px;
+          padding-top: 12px;
+          padding-bottom: 12px;
+        }
+      }
+    </style>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <section class="image-generator">
+      <div class="content">
+        <h1>Comicatalyst</h1>
+        <p>
+          Convert your ideas into your own comic within seconds using this
+          Comicatalyst tool.
+        </p>
+        <form action="#" class="generate-form">
+          <input
+            type="text"
+            class="prompt-input"
+            placeholder="Describe your comic story"
+            required
+          />
+          <div class="controls">
+            <button type="submit" class="generate-btn">Generate</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Layout Selector -->
+    <div class="layout-selector">
+      <label for="style-selector" class="dropdown">Select Comic Style:</label>
+      <select id="style-selector">
+        <option value="Folklore">Folklore</option>
+        <option value="Cute">Cute</option>
+        <option value="Cartoon">Cartoon</option>
+        <option value="BNW">Monochrome</option>
+        <option value="ThreeD">3D Render</option>
+        <option value="Realistic">Realistic</option>
+      </select>
+
+      <div id="dropdown" class="dropdown">
+        <button class="dropbtn">Select Page</button>
+        <div class="dropdown-content">
+          <a href="#">Page-1</a>
+          <a href="#">Page-2</a>
+          <a href="#">Page-3</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="prompt-container">
+      <h4>Prompt:</h4>
+      <p>
+        A squirrel named Nutty discovers a glowing acorn deep in the forest. As
+        the squirrel touches the glowing acorn, he transforms into a giant,
+        unstoppable super-squirrel with laser eyes. Panicked, squirrel Nutty
+        tries to save the forest by accidentally zapping everything in sight,
+        turning trees into giant piles of popcorn. In the end, squirrel uses his
+        new power to create a forest-wide popcorn party, saving the day and
+        making new friends along the way.
+      </p>
+    </div>
+
+    <div id="container1" class="container1">
+      <div class="boxx boxx1">
+        <div class="img-card">
+          <img src="images/gen1.jpeg" alt="image" />
+        </div>
+      </div>
+      <div class="boxx boxx2">
+        <div class="img-card">
+          <img src="images/gen2.jpeg" alt="image" />
+        </div>
+      </div>
+      <div class="boxx boxx3">
+        <div class="img-card">
+          <img src="images/gen3.jpeg" alt="image" />
+        </div>
+      </div>
+      <div class="boxx boxx4">
+        <div class="img-card">
+          <img src="images/gen4.jpeg" alt="image" />
+        </div>
+      </div>
+    </div>
+    <div id="container2" class="container2">
+      <div class="boxx boxxx1">
+        <div class="img-card">
+          <img src="images/img5.jpeg" alt="image" />
+        </div>
+      </div>
+      <div class="boxx boxxx2">
+        <div class="img-card">
+          <img src="images/img6.jpeg" alt="image" />
+        </div>
+      </div>
+      <div class="boxx boxxx3">
+        <div class="img-card">
+          <img src="images/img7.jpeg" alt="image" />
+        </div>
+      </div>
+      <div class="boxx boxxx4">
+        <div class="img-card">
+          <img src="images/img8.jpeg" alt="image" />
+        </div>
+      </div>
+    </div>
+
+    <div id="container3" class="container3">
+      <div class="boxx boxxxx1">
+        <div class="img-card">
+          <img src="images/img9.jpeg" alt="image" />
+        </div>
+      </div>
+      <div class="boxx boxxxx2">
+        <div class="img-card">
+          <img src="images/img10.jpeg" alt="image" />
+        </div>
+      </div>
+      <div class="boxx boxxxx3">
+        <div class="img-card">
+          <img src="images/img11.jpeg" alt="image" />
+        </div>
+      </div>
+      <div class="boxx boxxxx4">
+        <div class="img-card">
+          <img src="images/img12.jpeg" alt="image" />
+        </div>
+      </div>
+    </div>
+    <div class="button-container">
+      <button
+        class="download-buttons"
+        onclick="downloadAsImage()"
+        title="Download as Image"
+      >
+        <i class="fas fa-download"></i> <br />Img
+      </button>
+      <button
+        class="download-buttons"
+        onclick="downloadAsPDF()"
+        title="Download as PDF"
+      >
+        <i class="fas fa-download"></i> <br />PDF
+      </button>
+    </div>
+
+    <script>
+      let userPrompt = ""; // Variable to store user's input
+
+      // Define prompts for each grid
+      const prompts = {
+        container1:
+          "A squirrel named Nutty discovers a glowing acorn deep in the forest. As the squirrel touches the glowing acorn, he transforms into a giant, unstoppable super-squirrel with laser eyes. Panicked, squirrel Nutty tries to save the forest by accidentally zapping everything in sight, turning trees into giant piles of popcorn. In the end, squirrel uses his new power to create a forest-wide popcorn party, saving the day and making new friends along the way. (Style: Folklore)",
+        container2:
+          "A young wizard named Felix finds a talking book that only tells jokes. As the wizard tries to study serious spells, the book keeps distracting him with terrible puns. One day, the wizard Felix accidentally casts a 'laughter storm' over the entire city, making everyone laugh uncontrollably. In the end, the wizard learns that humor is also a kind of magic and becomes the first-ever comedy wizard. (Style: Cute)",
+        container3:
+          "Leo, a curious boy, finds an old microwave in his attic with strange glowing buttons.Out of curiosity, the boy places a slice of pizza inside and presses a random button.Suddenly, the microwave sparks, and boy, along with his pizza, is sucked into a swirling time vortex.The boy lands in ancient Rome, where a group of hungry gladiators mistake his pizza for a gift from the gods. (Style: 3D Render)",
+      };
+
+      document.querySelectorAll(".dropdown-content a").forEach((item) => {
+        item.addEventListener("click", function (event) {
+          event.preventDefault(); // Prevent default anchor behavior
+
+          let selectedValue = this.textContent
+            .trim()
+            .toLowerCase()
+            .replace("page-", "container"); // Convert "Grid-1" to "container1"
+          let containers = document.querySelectorAll(".container2");
+
+          // Hide all containers
+          containers.forEach((container) => (container.style.display = "none"));
+
+          // Show the selected container if it exists
+          let selectedContainer = document.getElementById(selectedValue);
+          if (selectedContainer) {
+            selectedContainer.style.display = "grid";
+          }
+
+          // Update dropdown button text
+          document.querySelector(".dropbtn").textContent = this.textContent;
+
+          // Update prompt text
+          document.querySelector(".prompt-container p").textContent =
+            userPrompt || prompts[selectedValue] || "No prompt available.";
+        });
+      });
+
+      document
+        .querySelector(".generate-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // Prevent page reload
+
+          userPrompt = document.querySelector(".prompt-input").value.trim(); // Get user input
+          if (userPrompt) {
+            document.querySelector(".prompt-container p").textContent =
+              userPrompt; // Update prompt text
+          }
+        });
+
+      document.querySelectorAll(".dropdown-content a").forEach((item) => {
+        item.addEventListener("click", function (event) {
+          event.preventDefault(); // Prevent default anchor behavior
+
+          let selectedValue = this.textContent
+            .trim()
+            .toLowerCase()
+            .replace("page-", "container"); // Convert "Grid-1" to "container1"
+
+          let containers = document.querySelectorAll(
+            ".container1, .container2, .container3"
+          );
+
+          // Hide all containers
+          containers.forEach((container) => (container.style.display = "none"));
+
+          // Show the selected container if it exists
+          let selectedContainer = document.getElementById(selectedValue);
+          if (selectedContainer) {
+            selectedContainer.style.display = "grid";
+          }
+
+          // Update dropdown button text
+          document.querySelector(".dropbtn").textContent = this.textContent;
+        });
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const downloadButtons = document.querySelectorAll(".download-buttons");
+        downloadButtons.forEach((button) => (button.style.display = "none"));
+
+        document.querySelectorAll(".dropdown-content a").forEach((item) => {
+          item.addEventListener("click", function (event) {
+            event.preventDefault(); // Prevent default anchor behavior
+
+            let selectedValue = this.textContent
+              .trim()
+              .toLowerCase()
+              .replace("page-", "container"); // Convert "Page-1" to "container1"
+
+            let containers = document.querySelectorAll(
+              ".container1, .container2, .container3"
+            );
+
+            // Hide all containers
+            containers.forEach(
+              (container) => (container.style.display = "none")
+            );
+
+            // Show the selected container if it exists
+            let selectedContainer = document.getElementById(selectedValue);
+            if (selectedContainer) {
+              selectedContainer.style.display = "grid";
+            }
+
+            // Update dropdown button text
+            document.querySelector(".dropbtn").textContent = this.textContent;
+
+            // Show download buttons
+            downloadButtons.forEach(
+              (button) => (button.style.display = "block")
+            );
+          });
+        });
+      });
+
+      function getVisibleContainer() {
+        let containers = document.querySelectorAll(
+          ".container1, .container2, .container3"
+        );
+        for (let container of containers) {
+          if (container.style.display === "grid") {
+            return container; // Return the currently visible container
+          }
+        }
+        return null; // If no container is visible
+      }
+
+      // Function to download the selected container as an image
+      function downloadAsImage() {
+        const container = getVisibleContainer(); // Get the currently visible container
+        if (!container) {
+          alert("No page selected for download.");
+          return;
+        }
+
+        html2canvas(container).then((canvas) => {
+          const link = document.createElement("a");
+          link.href = canvas.toDataURL("image/png");
+          link.download = "comic.png";
+          link.click();
+        });
+      }
+
+      // Function to download the selected container as a PDF
+      async function downloadAsPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const containers = document.querySelectorAll(
+          ".container1, .container2, .container3"
+        );
+
+        for (let i = 0; i < containers.length; i++) {
+          const container = containers[i];
+
+          // Temporarily show container off-screen for capture
+          const originalDisplay = container.style.display;
+          const originalPosition = container.style.position;
+          const originalLeft = container.style.left;
+          container.style.display = "grid";
+          container.style.position = "absolute";
+          container.style.left = "-9999px";
+
+          // Capture container
+          const canvas = await html2canvas(container);
+          const imgData = canvas.toDataURL("image/png");
+
+          // Restore original styles immediately after capture
+          container.style.display = originalDisplay;
+          container.style.position = originalPosition;
+          container.style.left = originalLeft;
+
+          // Calculate dimensions
+          const pageWidth = doc.internal.pageSize.getWidth();
+          const pageHeight = doc.internal.pageSize.getHeight();
+          const aspectRatio = canvas.width / canvas.height;
+
+          // Calculate dimensions to fit within page
+          let imgWidth = pageWidth;
+          let imgHeight = pageWidth / aspectRatio;
+
+          // If still too tall, scale down to page height
+          if (imgHeight > pageHeight) {
+            imgHeight = pageHeight;
+            imgWidth = pageHeight * aspectRatio;
+          }
+
+          // Add new page if not first page
+          if (i > 0) doc.addPage();
+
+          // Center horizontally, align to top if vertical space is tight
+          const xPosition = (pageWidth - imgWidth) / 2;
+          const yPosition =
+            pageHeight - imgHeight > 0 ? (pageHeight - imgHeight) / 2 : 0;
+
+          doc.addImage(
+            imgData,
+            "PNG",
+            xPosition,
+            yPosition,
+            imgWidth,
+            imgHeight
+          );
+        }
+
+        doc.save("comic.pdf");
+      }
+
+      // Connect to the WebSocket server
+      const ws = new WebSocket("ws://localhost:8080");
+
+      // Handle WebSocket connection open
+      ws.onopen = () => {
+        console.log("Connected to WebSocket server");
+      };
+
+      // Handle incoming messages from the server
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        if (data.type === "update") {
+          // Update the prompt-input field with the latest value
+          const promptInput = document.querySelector(".prompt-input");
+          promptInput.value = data.input;
+        }
+      };
+
+      // Get the input field
+      const promptInput = document.querySelector(".prompt-input");
+
+      // Send updates to the server as the user types
+      promptInput.addEventListener("input", () => {
+        const inputValue = promptInput.value;
+
+        // Send the input value to the WebSocket server
+        ws.send(JSON.stringify({ type: "update", input: inputValue }));
+      });
+    </script>
+  </body>
+</html>
