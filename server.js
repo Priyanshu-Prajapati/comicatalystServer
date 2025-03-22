@@ -18,7 +18,7 @@ app.use(cors({
 }));
 
 // API endpoint to handle chat requests
-app.post('/api/chat', async (req, res) => {
+app.post('/chat', async (req, res) => {
   const { prompt } = req.body;
     const apiKey = process.env.OR_API_KEY;
 
