@@ -3,7 +3,6 @@ const http = require("http");
 const WebSocket = require("ws");
 const dotenv = require('dotenv');
 const cors = require('cors');
-const axios = require('axios');
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -20,6 +19,7 @@ app.use(cors({
 // API endpoint to handle chat requests
 app.post('/api/chat', async (req, res) => {
   const { prompt } = req.body;
+    const apiKey = process.env.OR_API_KEY;
 
   if (!prompt) {
     return res.status(400).json({ error: 'Please enter a prompt.' });
@@ -29,7 +29,7 @@ app.post('/api/chat', async (req, res) => {
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        Authorization: 'Bearer YOUR_OPENROUTER_API_KEY',
+        Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
