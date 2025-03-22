@@ -3,6 +3,7 @@ const http = require("http");
 const WebSocket = require("ws");
 const dotenv = require('dotenv');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
 dotenv.config(); // Load environment variables from .env file
 
