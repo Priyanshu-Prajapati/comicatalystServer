@@ -20,16 +20,19 @@ app.use(cors({
 // API endpoint to handle chat requests
 app.post('/api/chat', async (req, res) => {
   const { prompt } = req.body;
-  const apiKey = process.env.OR_API_KEY;
 
   if (!prompt) {
     return res.status(400).json({ error: 'Please enter a prompt.' });
   }
 
   try {
-    const response = await axios.post(
-      'https://openrouter.ai/api/v1/chat/completions',
-      {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer YOUR_OPENROUTER_API_KEY',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
         model: 'deepseek/deepseek-chat:free',
         messages: [
           {
@@ -37,16 +40,15 @@ app.post('/api/chat', async (req, res) => {
             content: prompt,
           },
         ],
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+      }),
+    });
 
-    const markdowntext = response.data.choices?.[0]?.message?.content || 'No response received';
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const markdowntext = data.choices?.[0]?.message?.content || 'No response received';
     res.json({ response: markdowntext });
   } catch (error) {
     console.error('Error:', error.message);
