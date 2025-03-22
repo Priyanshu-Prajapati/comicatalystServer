@@ -3,17 +3,56 @@ const http = require("http");
 const WebSocket = require("ws");
 const dotenv = require('dotenv');
 const cors = require('cors');
+const axios = require('axios');
 
 dotenv.config(); // Load environment variables from .env file
 
 // Create an Express application
 const app = express();
+app.use(bodyParser.json());
 
 app.use(cors({
     origin: 'https://creative-quokka-866477.netlify.app', // Change this to match your frontend URL
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type']
 }));
+
+// API endpoint to handle chat requests
+app.post('/api/chat', async (req, res) => {
+  const { prompt } = req.body;
+  const apiKey = process.env.OR_API_KEY;
+
+  if (!prompt) {
+    return res.status(400).json({ error: 'Please enter a prompt.' });
+  }
+
+  try {
+    const response = await axios.post(
+      'https://openrouter.ai/api/v1/chat/completions',
+      {
+        model: 'deepseek/deepseek-chat:free',
+        messages: [
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    const markdowntext = response.data.choices?.[0]?.message?.content || 'No response received';
+    res.json({ response: markdowntext });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'An error occurred while processing your request.' });
+  }
+});
 
 // Create an HTTP server that integrates with Express
 const server = http.createServer(app);
